@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+# This script is intended to be used to run other commands, but log errors
+# and exit with same status code. It is particularly useful in CI/CD
+# scenarios where a build should fail if a command in a bash script fails
+# rather than move on to the next line of the bash scrip.
+
+# Run command and capture output
+output=$("$@" 2>&1)
+
+# If exit status is not zero, send output to syslog and stderr and exit with same code
+rc=$?;
+if [[ $rc != 0 ]]; then
+  message="Command exited with non-zero status (${rc}). Output: ${output}"
+  logger -p 1 -t application.crit "${message}"
+  (>&2 echo -en "\033[31m${message}\n\033[0m")
+  exit $rc;
+fi
