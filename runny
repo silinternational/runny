@@ -15,4 +15,8 @@ if [[ $rc != 0 ]]; then
   logger -p 1 -t application.crit "${message}"
   (>&2 echo -en "\033[31m${message}\n\033[0m")
   exit $rc;
+elif [[ "X$output" != "X" ]]; then
+  message="Command exited with zero status but non-empty output: ${output}"
+  logger -p 1 -t application.warning "${message}"
+  echo "${message}"
 fi
